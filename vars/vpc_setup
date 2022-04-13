@@ -1,4 +1,4 @@
-vpc_name: "vprofile-vpc"
+vpc_name: "mystack-vpc"
 
 # vpc range
 vpcCidr: "172.20.0.0/16"
@@ -19,3 +19,5 @@ zone3: us-east-1c
 
 state: present
 
+bastion_ami: ami-0aa7d40eeae50c9a9
+MYIP: 0.0.0.0/0

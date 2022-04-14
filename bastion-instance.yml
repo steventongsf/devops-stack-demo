@@ -1,0 +1,61 @@
+---
+- name: setup bastion host
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:  
+    - name: import vpc setup variables
+      include_vars: vars/vpc_setup
+    - name: import ids
+      include_vars: vars/output_vars
+    - name: create key pair
+      ec2_key:
+        name: stack-key
+        region: "{{region}}"
+        state: "{{ansible_state}}"
+      register: key_out
+    - name: save private key
+      copy:
+        content: "{{ key_out.key.private_key }}"
+        dest: "./bastion-key.pem"
+        mode: 0600
+      when: (key_out.changed) and (ansible_state == "present")
+    - name: bastion host security group
+      ec2_group: 
+        name: bastion-host-sg
+        description: bastion host security group
+        region: "{{region}}"
+        vpc_id: "{{vpcid}}"
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: "{{MYIP}}"
+        state: "{{ansible_state}}"
+      register: bastion_sg_out
+    - name: create bastion host in a public subnet under AZ 1
+      #https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_instance_module.html
+      ec2_instance: 
+        name: bastion01
+        key_name: stack-key
+        region: "{{region}}"
+        instance_type: t2.micro
+        image_id: "{{bastion_ami}}"
+        wait: yes
+        wait_timeout: 300
+        # ensure only one instance is running
+        exact_count: 1
+        security_group: bastion-host-sg
+        network:
+          assign_public_ip: true
+        vpc_subnet_id: "{{pubsub1id}}"
+        tags: 
+          Name: bastion01
+          Product: mystack
+      register: bastionhost_out
+    - name: update bastion security group id to vars/output_vars
+      blockinfile:
+        path: vars/output_vars
+        backup: no
+        block: |
+          bastion_sg_id: {{bastion_sg_out.group_id}}

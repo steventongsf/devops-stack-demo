@@ -14,7 +14,7 @@
         dns_support: yes
         dns_hostnames: yes
         tenancy: default
-        state: "{{state}}"
+        state: "{{ansible_state}}"
       register: vpcout
     - debug:
         var: vpcout
@@ -24,7 +24,7 @@
         vpc_id: "{{vpcout.vpc.id}}"
         region: "{{region}}"
         az: "{{zone1}}"
-        state: "{{state}}"
+        state: "{{ansible_state}}"
         cidr: "{{PubSub1Cidr}}"
         map_public: yes
         resource_tags:
@@ -37,7 +37,7 @@
         vpc_id: "{{vpcout.vpc.id}}"
         region: "{{region}}"
         az: "{{zone2}}"
-        state: "{{state}}"
+        state: "{{ansible_state}}"
         cidr: "{{PubSub2Cidr}}"
         map_public: yes
         resource_tags:
@@ -50,7 +50,7 @@
         vpc_id: "{{vpcout.vpc.id}}"
         region: "{{region}}"
         az: "{{zone3}}"
-        state: "{{state}}"
+        state: "{{ansible_state}}"
         cidr: "{{PubSub3Cidr}}"
         map_public: yes
         resource_tags:
@@ -63,7 +63,7 @@
         vpc_id: "{{vpcout.vpc.id}}"
         region: "{{region}}"
         az: "{{zone1}}"
-        state: "{{state}}"
+        state: "{{ansible_state}}"
         cidr: "{{PrivSub1Cidr}}"
         map_public: no
         resource_tags:
@@ -76,7 +76,7 @@
     #     vpc_id: "{{vpcout.vpc.id}}"
     #     region: "{{region}}"
     #     az: "{{zone2}}"
-    #     state: "{{state}}"
+    #     state: "{{ansible_state}}"
     #     cidr: "{{PrivSub2Cidr}}"
     #     map_public: no
     #     resource_tags:
@@ -89,7 +89,7 @@
     #     vpc_id: "{{vpcout.vpc.id}}"
     #     region: "{{region}}"
     #     az: "{{zone3}}"
-    #     state: "{{state}}"
+    #     state: "{{ansible_state}}"
     #     cidr: "{{PrivSub3Cidr}}"
     #     map_public: no
     #     resource_tags:
@@ -101,7 +101,7 @@
       ec2_vpc_igw: 
         vpc_id: "{{vpcout.vpc.id}}"
         region: "{{region}}"
-        state: "{{state}}"
+        state: "{{ansible_state}}"
         resource_tags:
           # this is the name that displays in subnet console
           Name: mystack-igw
@@ -127,7 +127,7 @@
     #   ec2_vpc_nat_gateway: 
     #     subnet_id: "{{pubsub1_out.subnet.id}}"
     #     region: "{{region}}"
-    #     state: "{{state}}"
+    #     state: "{{ansible_state}}"
     #   register: NATGW_out
     # - debug:
     #     var: NATGW_out

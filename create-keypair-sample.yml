@@ -1,0 +1,20 @@
+---
+  - name: test-aws
+    hosts: localhost
+    connection: local
+    gather_facts: False
+    tasks:
+      - name: example ec2 key
+        ec2_key:
+          name: sample
+          region: us-east-1
+          state: "{{ansible_state}}"
+        register: keyout
+      - debug:
+          var: keyout
+      # save generated private key
+      - name: store login key
+        copy:
+          content: "{{keyout.key.private_key}}"
+          dest: ./sample-key.pem
+        when: (keyout.changed) and (ansible_state == "present")
